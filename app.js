@@ -1,7 +1,7 @@
 const DIMENSIONS = [20, 20];
 const player = [{ x: 10, y: 10 }];
 const house = { x: 10, y: 5 };
-let direction = "NORTH";
+let direction = "SOUTH";
 const board = document.getElementById("board");
 
 function houseAtPosition(x, y) {
@@ -10,6 +10,7 @@ function houseAtPosition(x, y) {
 
 function playerAtPosition(x, y) {
   const length = player.length;
+
   for (const [index, segment] of player.entries()) {
     if (segment.x !== x || segment.y !== y) {
       continue;
@@ -31,6 +32,7 @@ function drawBoard() {
 
     [...Array(width)].forEach((_, colIndex) => {
       const div = document.createElement("div");
+      div.classList.add("cell");
       const house = houseAtPosition(colIndex, rowIndex);
       const player = playerAtPosition(colIndex, rowIndex);
 
@@ -41,7 +43,6 @@ function drawBoard() {
       } else {
         div.innerHTML = "XX";
       }
-      div.classList.add("cell");
       rowDiv.append(div);
     });
 
@@ -69,8 +70,21 @@ function takeTurn() {
   player.pop();
 }
 
+document.addEventListener("keydown", ({ code }) => {
+  if (code === "ArrowUp") {
+    direction = "NORTH";
+  } else if (code === "ArrowDown") {
+    direction = "SOUTH";
+  } else if (code === "ArrowLeft") {
+    direction = "WEST";
+  } else if (code === "ArrowRight") {
+    direction = "EAST";
+  }
+});
+
 drawBoard();
+
 setInterval(() => {
   takeTurn();
   drawBoard();
-}, 1000);
+}, 100);
