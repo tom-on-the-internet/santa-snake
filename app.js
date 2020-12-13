@@ -1,14 +1,52 @@
 const DIMENSIONS = [20, 20];
 const player = [{ x: 10, y: 10 }];
-const house = { x: 5, y: 5 };
+const house = { x: 10, y: 5 };
 let direction = "NORTH";
+const board = document.getElementById("board");
+
+function houseAtPosition(x, y) {
+  return house.x === x && house.y === y ? "🏠" : false;
+}
+
+function playerAtPosition(x, y) {
+  const length = player.length;
+  for (const [index, segment] of player.entries()) {
+    if (segment.x !== x || segment.y !== y) {
+      continue;
+    }
+
+    return length === index + 1 ? "🎅" : "🦌";
+  }
+
+  return false;
+}
 
 function drawBoard() {
   const [width, height] = DIMENSIONS;
+  board.innerHTML = "";
 
-  const board = [...Array(height)].map(() => new Array(width).fill(null));
-  board[house.y][house.x] = "🏠";
-  player.forEach((item) => (board[item.y][item.x] = "🎅"));
+  [...Array(height)].forEach((_, rowIndex) => {
+    const rowDiv = document.createElement("div");
+    rowDiv.classList.add("row");
+
+    [...Array(width)].forEach((_, colIndex) => {
+      const div = document.createElement("div");
+      const house = houseAtPosition(colIndex, rowIndex);
+      const player = playerAtPosition(colIndex, rowIndex);
+
+      if (player) {
+        div.innerHTML = player;
+      } else if (house) {
+        div.innerHTML = house;
+      } else {
+        div.innerHTML = "XX";
+      }
+      div.classList.add("cell");
+      rowDiv.append(div);
+    });
+
+    board.append(rowDiv);
+  });
 }
 
 function takeTurn() {
@@ -32,35 +70,7 @@ function takeTurn() {
 }
 
 drawBoard();
-
-takeTurn();
-drawBoard();
-
-takeTurn();
-drawBoard();
-
-takeTurn();
-drawBoard();
-
-takeTurn();
-drawBoard();
-
-takeTurn();
-drawBoard();
-
-direction = "WEST";
-
-takeTurn();
-drawBoard();
-
-takeTurn();
-drawBoard();
-
-takeTurn();
-drawBoard();
-
-takeTurn();
-drawBoard();
-
-takeTurn();
-drawBoard();
+setInterval(() => {
+  takeTurn();
+  drawBoard();
+}, 1000);
