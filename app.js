@@ -3,6 +3,7 @@ const player = [{ x: 10, y: 10 }];
 const house = { x: 10, y: 5 };
 let direction = "SOUTH";
 const board = document.getElementById("board");
+const score = document.getElementById("score");
 
 function houseAtPosition(x, y) {
   return house.x === x && house.y === y ? "🏠" : false;
@@ -20,6 +21,30 @@ function playerAtPosition(x, y) {
   }
 
   return false;
+}
+
+function deliveredToHouse() {
+  const santa = player[0];
+  return house.x === santa.x && house.y === santa.y;
+}
+
+function moveHouse() {
+  const [width, height] = DIMENSIONS;
+  while (true) {
+    const x = Math.floor(Math.random() * width);
+    const y = Math.floor(Math.random() * height);
+
+    if (!playerAtPosition(x, y)) {
+      house.x = x;
+      house.y = y;
+      return;
+    }
+  }
+}
+
+function addReindeer() {
+  const santa = player[player.length - 1];
+  player.push({ x: santa.x + 1, y: santa.y });
 }
 
 function drawBoard() {
@@ -48,6 +73,10 @@ function drawBoard() {
 
     board.append(rowDiv);
   });
+}
+
+function drawScore() {
+  score.innerHTML = player.length - 1;
 }
 
 function takeTurn() {
@@ -83,8 +112,14 @@ document.addEventListener("keydown", ({ code }) => {
 });
 
 drawBoard();
+drawScore();
 
 setInterval(() => {
   takeTurn();
+  if (deliveredToHouse()) {
+    moveHouse();
+    addReindeer();
+    drawScore();
+  }
   drawBoard();
 }, 100);
