@@ -1,13 +1,14 @@
 const DIMENSIONS = [20, 20];
-let player = [{ x: 10, y: 10 }];
+const player = [{ x: 10, y: 10 }];
+const house = { x: 5, y: 5 };
 let direction = "NORTH";
 
 function drawBoard() {
   const [width, height] = DIMENSIONS;
 
   const board = [...Array(height)].map(() => new Array(width).fill(null));
+  board[house.y][house.x] = "🏠";
   player.forEach((item) => (board[item.y][item.x] = "🎅"));
-  console.table(board);
 }
 
 function takeTurn() {
@@ -31,15 +32,35 @@ function takeTurn() {
 }
 
 drawBoard();
-takeTurn();
-drawBoard();
-takeTurn();
 
-drawBoard();
 takeTurn();
+drawBoard();
 
-drawBoard();
 takeTurn();
+drawBoard();
 
-drawBoard();
 takeTurn();
+drawBoard();
+
+takeTurn();
+drawBoard();
+
+takeTurn();
+drawBoard();
+
+direction = "WEST";
+
+takeTurn();
+drawBoard();
+
+takeTurn();
+drawBoard();
+
+takeTurn();
+drawBoard();
+
+takeTurn();
+drawBoard();
+
+takeTurn();
+drawBoard();
