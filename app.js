@@ -1,12 +1,25 @@
 const DIMENSIONS = [20, 20];
-const cellSize = (innerWidth - innerWidth / 3) / DIMENSIONS[0];
+const verticalLayout = innerHeight > innerWidth;
+const cellSize =
+  (innerWidth - innerWidth / (verticalLayout ? 9 : 2)) / DIMENSIONS[0];
 const player = [{ x: 10, y: 10 }];
 const house = { x: 10, y: 5 };
 let direction = "SOUTH";
 const wrapper = document.getElementById("wrapper");
 const board = document.getElementById("board");
 const score = document.getElementById("score");
+const highScore = document.getElementById("high-score");
+const buttons = document.getElementById("buttons");
+const northButton = document.getElementById("north-button");
+const westButton = document.getElementById("west-button");
+const eastButton = document.getElementById("east-button");
+const southButton = document.getElementById("south-button");
 let gameStatus = "ready";
+
+function getHighScore() {
+  const currentHighScore = localStorage.getItem("highScore") ?? 0;
+  highScore.innerHTML = `HIGH SCORE: ${currentHighScore}`;
+}
 
 function houseAtPosition(x, y) {
   return house.x === x && house.y === y ? "🏠" : false;
@@ -137,12 +150,32 @@ function takeTurn() {
   player.unshift(head);
   player.pop();
 }
+
+function replaceDirectionsWithRestart() {
+  const button = document.createElement("button");
+  button.innerHTML = "PLAY AGAIN?";
+  button.addEventListener("click", () => location.reload());
+  buttons.innerHTML = "";
+  buttons.appendChild(button);
+}
+
+function saveHighScore() {
+  const highScore = localStorage.getItem("highScore") ?? 0;
+  const score = player.length - 1;
+
+  if (score > parseInt(highScore)) {
+    localStorage.setItem("highScore", score);
+  }
+}
+
 function startGame() {
   const gameLoop = setInterval(() => {
     takeTurn();
     if (lostGame()) {
       gameStatus = "over";
       clearInterval(gameLoop);
+      replaceDirectionsWithRestart();
+      saveHighScore();
     } else if (deliveredToHouse()) {
       moveHouse();
       addReindeer();
@@ -150,6 +183,13 @@ function startGame() {
     drawScore();
     drawBoard();
   }, 100);
+}
+
+function startIfReady() {
+  if (gameStatus === "ready") {
+    gameStatus = "active";
+    startGame();
+  }
 }
 
 function setUp() {
@@ -165,14 +205,30 @@ function setUp() {
       direction = "EAST";
     }
 
-    if (gameStatus === "ready") {
-      gameStatus = "active";
-      startGame();
-    }
+    startIfReady();
+  });
+
+  northButton.addEventListener("click", () => {
+    direction = "NORTH";
+    startIfReady();
+  });
+  eastButton.addEventListener("click", () => {
+    direction = "EAST";
+    startIfReady();
+  });
+  westButton.addEventListener("click", () => {
+    direction = "WEST";
+    startIfReady();
+  });
+  southButton.addEventListener("click", () => {
+    direction = "SOUTH";
+    startIfReady();
   });
 
   // set size of santa and houses
   wrapper.style.fontSize = `${cellSize * 0.8}px`;
+
+  getHighScore();
 }
 
 setUp();
