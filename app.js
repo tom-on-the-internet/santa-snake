@@ -1,7 +1,5 @@
 const DIMENSIONS = [20, 20];
-const verticalLayout = innerHeight > innerWidth;
-const cellSize =
-  (innerWidth - innerWidth / (verticalLayout ? 9 : 2)) / DIMENSIONS[0];
+let cellSize = "30";
 const player = [{ x: 10, y: 10 }];
 const house = { x: 10, y: 5 };
 let direction = "SOUTH";
@@ -15,6 +13,16 @@ const westButton = document.getElementById("west-button");
 const eastButton = document.getElementById("east-button");
 const southButton = document.getElementById("south-button");
 let gameStatus = "ready";
+
+function setCellSize() {
+  const [width, height] = DIMENSIONS;
+  const idealWidth = (innerWidth - innerWidth * 0.2) / width;
+  const idealHeight = (innerHeight - innerHeight * 0.6) / height;
+
+  cellSize = idealWidth < idealHeight ? idealWidth : idealHeight;
+  wrapper.style.fontSize = `${cellSize * 0.8}px`;
+  console.log(idealWidth, idealHeight, cellSize);
+}
 
 function getHighScore() {
   const currentHighScore = localStorage.getItem("highScore") ?? 0;
@@ -153,7 +161,9 @@ function takeTurn() {
 
 function replaceDirectionsWithRestart() {
   const button = document.createElement("button");
-  button.innerHTML = "PLAY AGAIN?";
+  button.innerHTML = "🔃";
+  button.style.fontSize = "3em";
+  button.style.borderRadius = "50%";
   button.addEventListener("click", () => location.reload());
   buttons.innerHTML = "";
   buttons.appendChild(button);
@@ -194,14 +204,19 @@ function startIfReady() {
 
 function setUp() {
   // event listeners
-  document.addEventListener("keydown", ({ code }) => {
+  document.addEventListener("keydown", (event) => {
+    code = event.code;
     if (code === "ArrowUp") {
+      event.preventDefault();
       direction = "NORTH";
     } else if (code === "ArrowDown") {
+      event.preventDefault();
       direction = "SOUTH";
     } else if (code === "ArrowLeft") {
+      event.preventDefault();
       direction = "WEST";
     } else if (code === "ArrowRight") {
+      event.preventDefault();
       direction = "EAST";
     }
 
@@ -225,8 +240,7 @@ function setUp() {
     startIfReady();
   });
 
-  // set size of santa and houses
-  wrapper.style.fontSize = `${cellSize * 0.8}px`;
+  setCellSize();
 
   getHighScore();
 }
