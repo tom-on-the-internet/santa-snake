@@ -1,5 +1,5 @@
 const DIMENSIONS = [20, 20];
-let cellSize = "30";
+let cellSize = "0";
 const player = [{ x: 10, y: 10 }];
 const house = { x: 10, y: 5 };
 let direction = "SOUTH";
@@ -17,7 +17,7 @@ let gameStatus = "ready";
 function setCellSize() {
   const [width, height] = DIMENSIONS;
   const idealWidth = (innerWidth - innerWidth * 0.2) / width;
-  const idealHeight = (innerHeight - innerHeight * 0.6) / height;
+  const idealHeight = (innerHeight - innerHeight * 0.5) / height;
 
   cellSize = idealWidth < idealHeight ? idealWidth : idealHeight;
   wrapper.style.fontSize = `${cellSize * 0.8}px`;

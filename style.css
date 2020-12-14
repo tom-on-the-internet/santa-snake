@@ -25,21 +25,29 @@ body {
 }
 
 button {
-  /* font-size: 1.2em; */
   margin: 10px;
-  height: 3em;
-  width: 3em;
+  height: 2.5em;
+  width: 2.5em;
   color: white;
   background-color: green;
 }
 
 .row {
   display: flex;
+  border-bottom: solid 1px #ffffff77;
+}
+
+.row:first-child {
+  border-top: solid 1px #ffffff77;
 }
 
 .cell {
-  border: solid 1px #ffffff77;
+  border-right: solid 1px #ffffff77;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.cell:first-child {
+  border-left: solid 1px #ffffff77;
 }
