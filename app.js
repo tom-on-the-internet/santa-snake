@@ -4,6 +4,7 @@ const house = { x: 10, y: 5 };
 let direction = "SOUTH";
 const board = document.getElementById("board");
 const score = document.getElementById("score");
+let gameStatus = "active";
 
 function houseAtPosition(x, y) {
   return house.x === x && house.y === y ? "🏠" : false;
@@ -17,6 +18,10 @@ function playerAtPosition(x, y) {
       continue;
     }
 
+    if (status === "over") {
+      return "🪦";
+    }
+
     return length === index + 1 ? "🎅" : "🦌";
   }
 
@@ -24,8 +29,33 @@ function playerAtPosition(x, y) {
 }
 
 function deliveredToHouse() {
-  const santa = player[0];
-  return house.x === santa.x && house.y === santa.y;
+  const headOfSleigh = player[0];
+  return house.x === headOfSleigh.x && house.y === headOfSleigh.y;
+}
+
+function isOutOfBounds() {
+  const [width, height] = DIMENSIONS;
+  const headOfSleigh = player[0];
+
+  return (
+    headOfSleigh.x < 0 ||
+    headOfSleigh.x > width - 1 ||
+    headOfSleigh.y < 0 ||
+    headOfSleigh.y > height - 1
+  );
+}
+
+function ranIntoSelf() {
+  const headOfSleigh = player[0];
+
+  const [, , ...remainderOfSleigh] = player;
+  return remainderOfSleigh.some(
+    (item) => item.x === headOfSleigh.x && item.y === headOfSleigh.y
+  );
+}
+
+function lostGame() {
+  return isOutOfBounds() || ranIntoSelf();
 }
 
 function moveHouse() {
@@ -114,9 +144,12 @@ document.addEventListener("keydown", ({ code }) => {
 drawBoard();
 drawScore();
 
-setInterval(() => {
+const gameLoop = setInterval(() => {
   takeTurn();
-  if (deliveredToHouse()) {
+  if (lostGame()) {
+    status = "over";
+    clearInterval(gameLoop);
+  } else if (deliveredToHouse()) {
     moveHouse();
     addReindeer();
     drawScore();
