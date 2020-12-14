@@ -1,7 +1,26 @@
 body {
   font-family: monospace;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+#wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+#score {
+  margin-bottom: 5px;
 }
 
 .row {
   display: flex;
+}
+
+.cell {
+  border: solid 1px black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

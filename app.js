@@ -1,10 +1,12 @@
 const DIMENSIONS = [20, 20];
+const cellSize = (innerWidth - innerWidth / 3) / DIMENSIONS[0];
 const player = [{ x: 10, y: 10 }];
 const house = { x: 10, y: 5 };
 let direction = "SOUTH";
+const wrapper = document.getElementById("wrapper");
 const board = document.getElementById("board");
 const score = document.getElementById("score");
-let gameStatus = "active";
+let gameStatus = "ready";
 
 function houseAtPosition(x, y) {
   return house.x === x && house.y === y ? "🏠" : false;
@@ -18,7 +20,7 @@ function playerAtPosition(x, y) {
       continue;
     }
 
-    if (status === "over") {
+    if (gameStatus === "over") {
       return "🪦";
     }
 
@@ -87,6 +89,8 @@ function drawBoard() {
 
     [...Array(width)].forEach((_, colIndex) => {
       const div = document.createElement("div");
+      div.style.width = `${cellSize}px`;
+      div.style.height = `${cellSize}px`;
       div.classList.add("cell");
       const house = houseAtPosition(colIndex, rowIndex);
       const player = playerAtPosition(colIndex, rowIndex);
@@ -95,9 +99,8 @@ function drawBoard() {
         div.innerHTML = player;
       } else if (house) {
         div.innerHTML = house;
-      } else {
-        div.innerHTML = "XX";
       }
+
       rowDiv.append(div);
     });
 
@@ -108,7 +111,7 @@ function drawBoard() {
 function drawScore() {
   let scoreMessage = "SCORE: ";
   scoreMessage += player.length - 1;
-  if (status === "over") {
+  if (gameStatus === "over") {
     scoreMessage += " GAME OVER!";
   }
 
@@ -134,31 +137,45 @@ function takeTurn() {
   player.unshift(head);
   player.pop();
 }
+function startGame() {
+  const gameLoop = setInterval(() => {
+    takeTurn();
+    if (lostGame()) {
+      gameStatus = "over";
+      clearInterval(gameLoop);
+    } else if (deliveredToHouse()) {
+      moveHouse();
+      addReindeer();
+    }
+    drawScore();
+    drawBoard();
+  }, 100);
+}
 
-document.addEventListener("keydown", ({ code }) => {
-  if (code === "ArrowUp") {
-    direction = "NORTH";
-  } else if (code === "ArrowDown") {
-    direction = "SOUTH";
-  } else if (code === "ArrowLeft") {
-    direction = "WEST";
-  } else if (code === "ArrowRight") {
-    direction = "EAST";
-  }
-});
+function setUp() {
+  // event listeners
+  document.addEventListener("keydown", ({ code }) => {
+    if (code === "ArrowUp") {
+      direction = "NORTH";
+    } else if (code === "ArrowDown") {
+      direction = "SOUTH";
+    } else if (code === "ArrowLeft") {
+      direction = "WEST";
+    } else if (code === "ArrowRight") {
+      direction = "EAST";
+    }
+
+    if (gameStatus === "ready") {
+      gameStatus = "active";
+      startGame();
+    }
+  });
+
+  // set size of santa and houses
+  wrapper.style.fontSize = `${cellSize * 0.8}px`;
+}
+
+setUp();
 
 drawBoard();
 drawScore();
-
-const gameLoop = setInterval(() => {
-  takeTurn();
-  if (lostGame()) {
-    status = "over";
-    clearInterval(gameLoop);
-  } else if (deliveredToHouse()) {
-    moveHouse();
-    addReindeer();
-  }
-  drawScore();
-  drawBoard();
-}, 100);
