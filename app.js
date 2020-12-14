@@ -21,7 +21,6 @@ function setCellSize() {
 
   cellSize = idealWidth < idealHeight ? idealWidth : idealHeight;
   wrapper.style.fontSize = `${cellSize * 0.8}px`;
-  console.log(idealWidth, idealHeight, cellSize);
 }
 
 function getHighScore() {
