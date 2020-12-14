@@ -106,7 +106,13 @@ function drawBoard() {
 }
 
 function drawScore() {
-  score.innerHTML = player.length - 1;
+  let scoreMessage = "SCORE: ";
+  scoreMessage += player.length - 1;
+  if (status === "over") {
+    scoreMessage += " GAME OVER!";
+  }
+
+  score.innerHTML = scoreMessage;
 }
 
 function takeTurn() {
@@ -152,7 +158,7 @@ const gameLoop = setInterval(() => {
   } else if (deliveredToHouse()) {
     moveHouse();
     addReindeer();
-    drawScore();
   }
+  drawScore();
   drawBoard();
 }, 100);
