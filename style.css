@@ -25,9 +25,9 @@ body {
 }
 
 button {
-  margin: 10px;
-  height: 2.5em;
-  width: 2.5em;
+  margin: 5px;
+  height: 2.7em;
+  width: 5em;
   color: white;
   background-color: green;
 }
